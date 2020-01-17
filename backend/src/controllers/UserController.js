@@ -1,7 +1,8 @@
-import User from '../models/User';
 import Validator from '../services/Validator';
 import httpStatus from 'http-status-codes';
 import Auth from '../services/auth';
+import User from '../models/User';
+import Upload from '../services/upload';
 
 export default {
   async create(req, res) {
@@ -29,13 +30,14 @@ export default {
                               attributes: { exclude:['password'] }
                             });
   
-      delete newUser[0].dataValues["password"];
+      delete newUser[0].dataValues['password'];
 
       return res.status(httpStatus.CREATED)
         .send({
           error: false,
           token: await Auth.generateToken({ id: newUser.id, email: newUser.email }),
-          data: newUser[0] }); 
+          data: newUser[0] })
+        .end();
     } catch (error) {
       return res.status(httpStatus.CONFLICT)
         .send({
@@ -43,6 +45,7 @@ export default {
           token: null,
           data: error
         })
+        .end();
     }
   },
 
@@ -63,7 +66,7 @@ export default {
     
     if (!(await user.comparePass(password)))
       return res.status(httpStatus.UNAUTHORIZED)
-        .send({ error: true, token: null, data: { message: "Senha inválida!" }})
+        .send({ error: true, token: null, data: { message: 'Senha inválida!' }})
         .end();
 
     delete user.dataValues["password"];
@@ -72,6 +75,40 @@ export default {
         error: false,
         token: await Auth.generateToken({ id: user.id, email: user.email }),
         data: user
-      });
-  }
+      })
+      .end();
+  },
+
+  async creteUserPhoto(req, res) {
+    const valid = new Validator();
+    valid.isRequired(req.files['user_photo'], 'Foto do usuário não encontrada!');
+    if (!valid.isValid())
+        return res.status(httpStatus.UNPROCESSABLE_ENTITY)
+          .send({ error: true, token: null, data: valid.getError() })
+          .end();
+    
+    const { id } = await Auth.decodeToken(req.headers['x-access-token']);
+    const currentUser = await User.findByPk(id);
+    delete currentUser.dataValues['password'];
+
+    if (!currentUser)
+      return res.status(HttpStatus.NOT_FOUND)
+        .send({ error: true, token: null, data: { message: 'Usuário não encontrado' } })
+        .end();
+    
+    if (currentUser.user_photo) {
+      const { filename, fieldname } = req.files['user_photo'].shift();
+      await Upload.deleteImage(fieldname, await currentUser.getPhotoName());
+      currentUser.setDataValue('user_photo',filename);
+      await currentUser.save();
+    }
+
+    res.status(httpStatus.OK)
+      .send({
+        error: false,
+        token: await Auth.generateToken({ id: currentUser.id, email: currentUser.email }),
+        data: currentUser
+      })
+      .end(); 
+  },
 };

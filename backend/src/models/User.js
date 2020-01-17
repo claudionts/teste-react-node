@@ -17,10 +17,15 @@ export default class User extends Model {
       sequelize
     });
     
+    super.beforeUpdate(async user => user.user_photo = `https:localhost:3333/tmp/user_photo/${user.user_photo}`);
     super.beforeCreate(async user => user.password = await hashPassword(user.password));
   }
 
   async comparePass(clientPass){
     return await bcrypt.compare(clientPass, this.password);
   };
+
+  getPhotoName() {
+    return this.user_photo.split('user_photo/')[1];
+  }
 };
