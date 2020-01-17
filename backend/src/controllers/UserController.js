@@ -60,7 +60,8 @@ export default {
     let user = await User.findOne({
                       where: { email }
                     });
-    if (await !user.comparePass(password))
+    
+    if (!(await user.comparePass(password)))
       return res.status(httpStatus.UNAUTHORIZED)
         .send({ error: true, token: null, data: { message: "Senha inválida!" }})
         .end();
