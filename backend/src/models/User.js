@@ -26,6 +26,6 @@ export default class User extends Model {
   };
 
   getPhotoName() {
-    return this.user_photo.split('user_photo/')[1];
+    return await this.user_photo.split('user_photo/')[1];
   }
 };
