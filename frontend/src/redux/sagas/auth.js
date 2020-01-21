@@ -5,8 +5,7 @@ import { toastr } from 'react-redux-toastr';
 function loginAuth(email, password) {
   return new Promise((resolve, reject) => {
     api.post('/user/auth',
-    {
-      email,
+    { email,
       password
     }).then(res => resolve(res.data))
       .catch(err => {
@@ -18,11 +17,10 @@ function loginAuth(email, password) {
 function* getUserLogin(action) {
   try {
     const { email, password } = action.payload;
-    const response = yield call(loginAuth, email, password);
-    yield put({ type: 'FETCH_USER', payload: { user: response.data } });
-
+    const { data, token } = yield call(loginAuth, email, password);
+    yield put({ type: 'FETCH_USER', payload: { user: data, token } });
   } catch (error) {
-    yield put({ type: 'ERROR_MESSAGE_LOGIN', payload: { message: error.data.data.message } })
+    yield put({ type: 'ERROR_MESSAGE_LOGIN', payload: { message: error.data.data.message } });
   }
 };
 
