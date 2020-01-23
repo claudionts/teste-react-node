@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { toastr } from 'react-redux-toastr';
 import useForm from '../services/useForm';
@@ -10,7 +10,11 @@ import * as authActions from '../redux/actions/auth';
 
 import './../styles/form.css';
 
-const PatternLogin = ({ auth, fetchUser, state }) => {
+const PatternLogin = ({ auth, state, fetchUser, history }) => {
+  useEffect(() => {
+    if (state.auth.user && state.auth.token)
+      history.push('/singin');
+  }, [state]);
   const submitChange = async (values) => {
     await auth({...values})
   };
@@ -40,7 +44,7 @@ const PatternLogin = ({ auth, fetchUser, state }) => {
     <div id="main-container">
       <form action="">
         <img src={logo} alt="" height="" width="175" />
-        <h1>{JSON.stringify(state.auth)}</h1>
+        <h5>{JSON.stringify(state.auth)}</h5>
         <input 
           placeholder="Digite seu e-mail"
           name="email"

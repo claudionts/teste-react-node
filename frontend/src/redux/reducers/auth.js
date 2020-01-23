@@ -13,6 +13,10 @@ export default function (state = INITIAL_STATE, action) {
       return { ...state, user: action.payload.user, token: action.payload.token, isAuth: true };
     case 'ERROR_MESSAGE_LOGIN':
       return { ...state, isAuth: false, message: action.payload.message };
+    case 'GET_STATE':
+      return { ...state };
+    case 'GET_CURRENT_STATE':
+      return { ...state };
     default:
       return state;
   }

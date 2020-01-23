@@ -1,18 +1,18 @@
 import React from 'react';
-import useForm from '../../services/useForm';
-import logo from '../../assets/logo_180x.jpg';
-import './../../styles/form.css';
+import useForm from '../services/useForm';
+import logo from '../assets/logo_180x.jpg';
+import '../styles/form.css';
 
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
+// import { connect } from 'react-redux';
+// import { bindActionCreators } from 'redux';
 
-import * as authActions from '../../redux/actions/auth';
+// import * as authActions from '../../redux/actions/auth';
 
 const submitChange = (values) => console.log(values);
 
 const validate = (values) => console.log(values);
 
-const SingIn = (props) => {
+const SingIn = () => {
   const {
 		values,
 		handleSubmit,
@@ -48,8 +48,4 @@ const SingIn = (props) => {
   );
 }
 
-const mapStateToProps = state => ({
-  auth: state.auth,
-});
-
-export default connect(mapStateToProps)(SingIn);
+export default SingIn;
