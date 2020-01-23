@@ -17,7 +17,7 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: false
       },
-      user_photo: {
+      photo: {
         allowNull: true,
         type: Sequelize.STRING
       },

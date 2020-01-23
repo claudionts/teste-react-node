@@ -11,9 +11,9 @@ export default {
         email = undefined,
         password = undefined,
         name = undefined,
-        user_photo = null
+        photo = null
       } = req.body;
-  
+      const token = await Auth.generateToken({ id: user.id, email: user.email });
       const valid = new Validator();
       valid.isEmail(email, 'Email inválido');
       valid.isRequired(password, 'Insira o Password');
@@ -26,7 +26,7 @@ export default {
   
       let newUser = await User.findOrCreate({
                               where: { email },
-                              defaults: { email, password, name, user_photo },
+                              defaults: { email, password, name, photo, token },
                               attributes: { exclude:['password'] }
                             });
   
@@ -35,7 +35,7 @@ export default {
       return res.status(httpStatus.CREATED)
         .send({
           error: false,
-          token: await Auth.generateToken({ id: newUser.id, email: newUser.email }),
+          token: newUser[0].token,
           data: newUser[0] })
         .end();
     } catch (error) {
@@ -68,12 +68,12 @@ export default {
       return res.status(httpStatus.UNAUTHORIZED)
         .send({ error: true, token: null, data: { message: 'Senha inválida!' }})
         .end();
-
+    user.token = await Auth.generateToken({ id: user.id, email: user.email });
     delete user.dataValues["password"];
     return res.status(httpStatus.ACCEPTED)
       .send({
         error: false,
-        token: await Auth.generateToken({ id: user.id, email: user.email }),
+        token: user.token,
         data: user
       })
       .end();
@@ -96,17 +96,17 @@ export default {
         .send({ error: true, token: null, data: { message: 'Usuário não encontrado' } })
         .end();
     
-    if (currentUser.user_photo) {
+    if (currentUser.photo) {
       const { filename, fieldname } = req.files['user_photo'].shift();
       await Upload.deleteImage(fieldname, await currentUser.getPhotoName());
-      currentUser.setDataValue('user_photo',filename);
+      currentUser.setDataValue('photo',filename);
       await currentUser.save();
     }
 
     res.status(httpStatus.OK)
       .send({
         error: false,
-        token: await Auth.generateToken({ id: currentUser.id, email: currentUser.email }),
+        token: currentUser.token,
         data: currentUser
       })
       .end(); 

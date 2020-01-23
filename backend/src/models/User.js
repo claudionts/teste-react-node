@@ -11,14 +11,14 @@ export default class User extends Model {
     super.init({
       name: DataTypes.STRING,
       email: DataTypes.STRING,
-      user_photo: DataTypes.STRING,
+      photo: DataTypes.STRING,
       token: DataTypes.STRING,
       password: DataTypes.STRING
     }, {
       sequelize
     });
     
-    super.beforeUpdate(async user => user.user_photo = `https:localhost:3333/tmp/user_photo/${user.user_photo}`);
+    super.beforeUpdate(async user => user.photo = `https:localhost:3333/tmp/user_photo/${user.photo}`);
     super.beforeCreate(async user => user.password = await hashPassword(user.password));
   }
 
@@ -27,6 +27,6 @@ export default class User extends Model {
   };
 
   getPhotoName() {
-    return this.user_photo.split('user_photo/')[1];
+    return this.photo.split('user_photo/')[1];
   }
 };
