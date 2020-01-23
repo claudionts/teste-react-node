@@ -12,6 +12,7 @@ export default class User extends Model {
       name: DataTypes.STRING,
       email: DataTypes.STRING,
       user_photo: DataTypes.STRING,
+      token: DataTypes.STRING,
       password: DataTypes.STRING
     }, {
       sequelize
@@ -26,6 +27,6 @@ export default class User extends Model {
   };
 
   getPhotoName() {
-    return await this.user_photo.split('user_photo/')[1];
+    return this.user_photo.split('user_photo/')[1];
   }
 };
