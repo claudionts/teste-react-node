@@ -11,15 +11,17 @@ import * as authActions from '../redux/actions/auth';
 import './../styles/form.css';
 
 const PatternLogin = ({ auth, state, fetchUser, history }) => {
+
   useEffect(() => {
     if (state.auth.user && state.auth.token)
       history.push('/singin');
   }, [state]);
+
   const submitChange = async (values) => {
     await auth({...values})
   };
   
-  const validate = async (values) => {
+  const validate = (values) => {
     let errors = {};
     let validate = new Validator();
     validate.isEmail(values.email, 'Email não está certo!');

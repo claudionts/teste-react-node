@@ -31,6 +31,7 @@ const useForm = (callback, validate) => {
       const fr = new FileReader();
       await fr.addEventListener('load', (event) => {
         const imgTag = document.getElementById('imgUser');
+        console.log(document.getElementById('imgUser'))
         imgTag.src = event.target.result;
         imgTag.innerHTML = event.target.result;
         setValues(values => ({ ...values, avatar: event.target.result }));

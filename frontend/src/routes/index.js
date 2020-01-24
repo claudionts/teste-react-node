@@ -10,7 +10,7 @@ const Routes = () => (
     <Switch>
       <Route path="/" exact component={PatternLogin} />
       {/* <Route path="/box/:id" component={Box} /> */}
-      <PrivateRoute path="/singin" exact component={SignIn} />
+      <Route path="/singin" exact component={SignIn} />
     </Switch>
   </BrowserRouter>
 );
